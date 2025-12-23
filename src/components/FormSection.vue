@@ -28,6 +28,7 @@ const errors = ref<ValidationErrors>({
 })
 
 const checkCheckbox = ref(false)
+const hasSubmitted = ref(false)
 
 watch(
   info,
@@ -69,6 +70,11 @@ const isValid = computed(() => {
 gsap.registerPlugin(ScrollTrigger)
 
 onMounted(() => {
+  const submittedInfo = localStorage.getItem('submittedInfo')
+  if (submittedInfo) {
+    hasSubmitted.value = true
+  }
+
   gsap.from('.form-section', {
     y: 60,
     opacity: 0,
@@ -98,6 +104,12 @@ onUnmounted(() => {
 const handleSubmit = async (e: Event) => {
   e.preventDefault()
 
+  const submittedInfo = localStorage.getItem('submittedInfo')
+  if (submittedInfo) {
+    toast.error('이미 응모하셨습니다.')
+    return
+  }
+
   errors.value.name = validateName(info.value.name)
   errors.value.phone = validatePhone(info.value.phone)
   errors.value.email = validateEmail(info.value.email)
@@ -110,6 +122,16 @@ const handleSubmit = async (e: Event) => {
   try {
     await postInfo(info.value)
     toast.success('응모가 완료되었습니다.')
+    localStorage.setItem(
+      'submittedInfo',
+      JSON.stringify({
+        name: info.value.name,
+        phone: info.value.phone,
+        email: info.value.email,
+        submittedAt: new Date().toISOString(),
+      }),
+    )
+    hasSubmitted.value = true
 
     info.value = {
       name: '',
