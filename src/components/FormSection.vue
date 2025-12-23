@@ -299,4 +299,45 @@ const handleSubmit = async (e: Event) => {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 199, 60, 0.4);
 }
+
+@media (max-width: 768px) {
+  .form-section {
+    padding: 60px 20px;
+  }
+
+  .section-title {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .section-subtitle {
+    font-size: 14px;
+    margin-bottom: 40px;
+  }
+
+  .form {
+    padding: 30px 20px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .form-group input[type='text'],
+  .form-group input[type='tel'],
+  .form-group input[type='email'] {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+
+  .submit-button {
+    padding: 16px;
+    font-size: 16px;
+  }
+}
 </style>

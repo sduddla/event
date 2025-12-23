@@ -109,4 +109,38 @@ onUnmounted(() => {
   line-height: 1.6;
   font-size: 16px;
 }
+
+@media (max-width: 768px) {
+  .event-info-section {
+    padding: 60px 20px;
+  }
+
+  .section-title {
+    font-size: 28px;
+    margin-bottom: 30px;
+  }
+
+  .info-card {
+    padding: 20px 16px;
+  }
+
+  .info-item {
+    padding: 12px 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .info-label {
+    font-size: 14px;
+  }
+
+  .info-value {
+    font-size: 14px;
+  }
+
+  .description {
+    font-size: 14px;
+  }
+}
 </style>

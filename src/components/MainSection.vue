@@ -348,4 +348,63 @@ onUnmounted(() => {
     transform: translateY(0);
   }
 }
+
+@media (max-width: 768px) {
+  .main-section {
+    padding: 20px 16px;
+  }
+
+  .main-header {
+    padding: 20px 16px;
+  }
+
+  .logo {
+    font-size: 20px;
+  }
+
+  .main-title {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+
+  .main-subtitle {
+    font-size: 16px;
+    margin-bottom: 30px;
+  }
+
+  .countdown-container {
+    padding: 20px 16px;
+    margin-bottom: 30px;
+  }
+
+  .countdown-timer {
+    gap: 6px;
+  }
+
+  .countdown-item {
+    min-width: 50px;
+    padding: 12px 8px;
+  }
+
+  .countdown-number {
+    font-size: 24px;
+  }
+
+  .countdown-unit {
+    font-size: 10px;
+  }
+
+  .countdown-separator {
+    font-size: 18px;
+  }
+
+  .main-button {
+    padding: 14px 32px;
+    font-size: 16px;
+  }
+
+  .chat-bubble {
+    display: none;
+  }
+}
 </style>

@@ -245,4 +245,53 @@ onUnmounted(() => {
   font-weight: 600;
   color: #00c73c;
 }
+
+@media (max-width: 768px) {
+  .interaction-section {
+    padding: 60px 20px;
+  }
+
+  .section-title {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+
+  .section-subtitle {
+    font-size: 14px;
+    margin-bottom: 40px;
+  }
+
+  .roulette-wrapper {
+    width: 280px;
+    height: 280px;
+  }
+
+  .roulette {
+    width: 280px;
+    height: 280px;
+  }
+
+  .roulette-item {
+    font-size: 12px;
+  }
+
+  .spin-button {
+    padding: 14px 32px;
+    font-size: 16px;
+  }
+
+  .result-message {
+    padding: 16px;
+    margin-top: 20px;
+  }
+
+  .result-icon {
+    font-size: 36px;
+    margin-bottom: 8px;
+  }
+
+  .result-text {
+    font-size: 16px;
+  }
+}
 </style>

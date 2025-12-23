@@ -196,4 +196,48 @@ onUnmounted(() => {
   font-size: 14px;
   margin-top: 20px;
 }
+
+@media (max-width: 768px) {
+  .reward-section {
+    padding: 60px 20px;
+  }
+
+  .section-title {
+    font-size: 28px;
+    margin-bottom: 40px;
+  }
+
+  .reward-list {
+    gap: 20px;
+  }
+
+  .reward-card {
+    padding: 12px;
+  }
+
+  .coupon-content {
+    gap: 12px;
+  }
+
+  .coupon-image {
+    width: 50px;
+    height: 50px;
+  }
+
+  .coupon-name {
+    font-size: 14px;
+  }
+
+  .coupon-brand {
+    font-size: 11px;
+  }
+
+  .coupon-date {
+    font-size: 10px;
+  }
+
+  .notice {
+    font-size: 12px;
+  }
+}
 </style>
