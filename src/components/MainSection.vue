@@ -8,6 +8,7 @@ const hours = ref(0)
 const minutes = ref(0)
 const seconds = ref(0)
 let countDownInterval: number | null = null
+let endTime: Date | null = null
 
 const scrollToForm = () => {
   const formSection = document.querySelector('.form-section')
@@ -15,31 +16,38 @@ const scrollToForm = () => {
 }
 
 const countDownTimer = async () => {
+  if (!endTime) return
+
+  const now = new Date()
+  const diff = endTime.getTime() - now.getTime()
+
+  if (diff <= 0) {
+    days.value = 0
+    hours.value = 0
+    minutes.value = 0
+    seconds.value = 0
+    return
+  }
+
+  days.value = Math.floor(diff / (1000 * 60 * 60 * 24))
+  hours.value = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  minutes.value = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+  seconds.value = Math.floor((diff % (1000 * 60)) / 1000)
+}
+
+// 초기 호출
+const initCountDown = async () => {
   try {
     const eventInfo = await getEventInfo()
-    const endTime = new Date(eventInfo.endTime)
-    const now = new Date()
-    const diff = endTime.getTime() - now.getTime()
-
-    if (diff <= 0) {
-      days.value = 0
-      hours.value = 0
-      minutes.value = 0
-      seconds.value = 0
-      return
-    }
-
-    days.value = Math.floor(diff / (1000 * 60 * 60 * 24))
-    hours.value = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    minutes.value = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-    seconds.value = Math.floor((diff % (1000 * 60)) / 1000)
+    endTime = new Date(eventInfo.endTime)
+    countDownTimer()
   } catch (error) {
     console.error('카운트다운 타이머 오류:', error)
   }
 }
 
 onMounted(async () => {
-  await countDownTimer()
+  await initCountDown()
   countDownInterval = setInterval(countDownTimer, 1000)
 
   gsap.from('.chat-bubble-1', {
