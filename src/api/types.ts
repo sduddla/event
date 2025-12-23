@@ -10,6 +10,7 @@ export interface EventData {
   id: number
   period: string
   target: string
+  endTime: string
   description: string
 }
 
