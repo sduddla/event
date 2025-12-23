@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import gsap from 'gsap'
+import { onMounted, ref } from 'vue'
 
 const days = ref(0)
 const hours = ref(0)
@@ -10,6 +11,46 @@ const scrollToForm = () => {
   const formSection = document.querySelector('.form-section')
   formSection?.scrollIntoView({ behavior: 'smooth' })
 }
+
+onMounted(() => {
+  gsap.from('.chat-bubble-1', {
+    opacity: 0,
+    scale: 0,
+    x: 50,
+    y: -50,
+    duration: 0.8,
+    rotation: -10,
+    delay: 0.5,
+    ease: 'back.out(1.7)',
+  })
+  gsap.from('.chat-bubble-2', {
+    opacity: 0,
+    scale: 0,
+    x: 50,
+    y: -20,
+    duration: 0.8,
+    rotation: 10,
+    delay: 0.8,
+    ease: 'back.out(1.7)',
+  })
+
+  gsap.to('.chat-bubble-1', {
+    y: -5,
+    duration: 2,
+    yoyo: true,
+    repeat: -1,
+    delay: 1.5,
+    ease: 'sine.inOut',
+  })
+  gsap.to('.chat-bubble-2', {
+    y: -5,
+    duration: 2,
+    yoyo: true,
+    repeat: -1,
+    delay: 2,
+    ease: 'sine.inOut',
+  })
+})
 </script>
 <template>
   <section class="main-section">
@@ -21,6 +62,16 @@ const scrollToForm = () => {
         <span class="highlight">TIKITAKA</span> 메신저 신규 서비스<br />
         기념 이벤트
       </h1>
+
+      <div class="chat-bubble chat-bubble-1">
+        <div class="chat-content">👋🏻 안녕하세요!</div>
+        <div class="bubble-tail"></div>
+      </div>
+      <div class="chat-bubble chat-bubble-2">
+        <div class="chat-content">✨ 신규 오픈!</div>
+        <div class="bubble-tail"></div>
+      </div>
+
       <p class="main-subtitle fade-in-delay-1">이벤트 응모하고 특별 혜택 받아가세요!</p>
 
       <div class="countdown-container fade-in-delay-2">
@@ -81,6 +132,7 @@ const scrollToForm = () => {
 .main-content {
   text-align: center;
   max-width: 600px;
+  position: relative;
 }
 
 .main-title {
@@ -89,10 +141,62 @@ const scrollToForm = () => {
   color: #ffffff;
   margin-bottom: 20px;
   line-height: 1.2;
+  position: relative;
 }
 
 .highlight {
   color: #00c73c;
+}
+
+.chat-bubble {
+  position: absolute;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 10px 16px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.chat-bubble-1 {
+  top: -80px;
+  right: -100px;
+  transform: rotate(-15deg);
+  box-shadow:
+    -4px -4px 12px rgba(0, 0, 0, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.chat-bubble-2 {
+  top: -40px;
+  right: -80px;
+  transform: rotate(15deg);
+  box-shadow:
+    4px -4px 12px rgba(0, 0, 0, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.bubble-content {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.bubble-tail {
+  position: absolute;
+  bottom: -8px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #ffffff;
+}
+
+.chat-bubble-1 .bubble-tail {
+  right: 20px;
+}
+
+.chat-bubble-2 .bubble-tail {
+  right: 25px;
 }
 
 .main-subtitle {

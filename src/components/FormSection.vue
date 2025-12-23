@@ -1,4 +1,37 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { onMounted, onUnmounted } from 'vue'
+
+gsap.registerPlugin(ScrollTrigger)
+
+onMounted(() => {
+  gsap.from('.form-section', {
+    y: 60,
+    opacity: 0,
+    duration: 1,
+    ease: 'power2.out',
+    scrollTrigger: {
+      trigger: '.form-section',
+      start: 'top 85%',
+      toggleActions: 'play none none none',
+    },
+  })
+  gsap.from('.form-group', {
+    x: -30,
+    opacity: 0,
+    duration: 0.5,
+    stagger: 0.1,
+    scrollTrigger: {
+      trigger: '.form',
+      start: 'top 85%',
+    },
+  })
+})
+onUnmounted(() => {
+  ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
+})
+</script>
 <template>
   <section class="form-section">
     <div class="container">
@@ -35,7 +68,7 @@
 </template>
 <style scoped>
 .form-section {
-  padding: 80px 20px;
+  padding: 120px 20px;
   background: #f5f5f5;
 }
 
@@ -55,7 +88,7 @@
 .section-subtitle {
   font-size: 16px;
   color: #666666;
-  margin-bottom: 40px;
+  margin-bottom: 60px;
   text-align: center;
 }
 
@@ -117,9 +150,12 @@
 .checkbox-label input[type='checkbox'] {
   width: 20px;
   height: 20px;
-  margin-right: 12px;
   cursor: pointer;
-  accent-color: #00c73c;
+  accent-color: #1a1a1a;
+  flex-shrink: 0;
+  position: relative;
+  top: 5px;
+  margin-right: 8px;
 }
 
 .submit-button {

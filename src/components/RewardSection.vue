@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import coffeeImage from '@/assets/images/coffee.png'
 import movieImage from '@/assets/images/movie.png'
 import cuImage from '@/assets/images/coupon.png'
@@ -10,47 +12,46 @@ const rewards = [
     name: '스타벅스 아메리카노 Tall 쿠폰',
     brand: '스타벅스',
     image: coffeeImage,
-    validDate: '2025.12.25 - 12.31',
+    validDate: '2025.12.19 - 12.31',
   },
   {
     id: 2,
     name: 'CU 기프티콘 5,000원 할인 쿠폰',
     brand: 'CU',
     image: cuImage,
-    validDate: '2025.12.25 - 12.31',
+    validDate: '2025.12.19 - 12.31',
   },
   {
     id: 3,
     name: '메가박스 영화 티켓 쿠폰',
     brand: '메가박스',
     image: movieImage,
-    validDate: '2025.12.25 - 12.31',
+    validDate: '2025.12.19 - 12.31',
   },
 ]
 
-const isVisible = ref(false)
+gsap.registerPlugin(ScrollTrigger)
 
-onMounted(() => {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(
-      (entry) => {
-        if (entry.isIntersecting) {
-          isVisible.value = true
-        }
-      },
-      {
-        threshold: 0.1,
-      },
-    )
+onMounted(async () => {
+  gsap.from('.reward-section', {
+    y: 60,
+    opacity: 0,
+    duration: 0.8,
+    ease: 'power2.out',
+    scrollTrigger: {
+      trigger: '.reward-section',
+      start: 'top 85%',
+      toggleActions: 'play none none none',
+    },
   })
-  const section = document.querySelector('.reward-section')
-  if (section) {
-    observer.observe(section)
-  }
+})
+
+onUnmounted(() => {
+  ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
 })
 </script>
 <template>
-  <section class="reward-section" :class="{ visible: isVisible }">
+  <section class="reward-section">
     <div class="container">
       <h2 class="section-title">보상/혜택 목록</h2>
       <div class="reward-list">
@@ -74,16 +75,9 @@ onMounted(() => {
 </template>
 <style scoped>
 .reward-section {
-  padding: 80px 20px;
+  padding: 120px 20px;
   background: #f5f5f5;
-  opacity: 0;
-  transform: translateY(30px);
   transition: all 0.8s ease-out;
-}
-
-.reward-section.visible {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .container {
@@ -95,7 +89,7 @@ onMounted(() => {
   font-size: 32px;
   font-weight: 700;
   color: #000000;
-  margin-bottom: 40px;
+  margin-bottom: 60px;
   text-align: center;
 }
 

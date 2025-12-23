@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-
+import { onMounted, onUnmounted, ref } from 'vue'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 const isSpinning = ref(false)
 const rotation = ref(0)
 const selectedReward = ref<{ value: number; label: string } | undefined>(undefined)
@@ -44,33 +45,32 @@ const spinRoulette = () => {
   }, 3000)
 }
 
-const isVisible = ref(false)
+gsap.registerPlugin(ScrollTrigger)
 
 onMounted(() => {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(
-      (entry) => {
-        if (entry.isIntersecting) {
-          isVisible.value = true
-        }
-      },
-      {
-        threshold: 0.1,
-      },
-    )
+  gsap.from('.interaction-section', {
+    y: 60,
+    opacity: 0,
+    duration: 1,
+    ease: 'power2.out',
+    scrollTrigger: {
+      trigger: '.interaction-section',
+      start: 'top 85%',
+      toggleActions: 'play none none none',
+    },
   })
-  const section = document.querySelector('.interaction-section')
-  if (section) {
-    observer.observe(section)
-  }
+})
+
+onUnmounted(() => {
+  ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
 })
 </script>
 
 <template>
-  <section class="interaction-section" :class="{ visible: isVisible }">
+  <section class="interaction-section">
     <div class="container">
       <h2 class="section-title">행운의 룰렛</h2>
-      <p class="section-subtitle">룰렛을 돌려서 추가 혜택을 받아보세요!</p>
+      <p class="section-subtitle">룰렛을 돌려서 작은 선물을 추가로 받아보세요!</p>
 
       <div class="roulette-container">
         <div class="roulette-wrapper">
@@ -107,16 +107,9 @@ onMounted(() => {
 </template>
 <style scoped>
 .interaction-section {
-  padding: 80px 20px;
+  padding: 120px 20px;
   background: #ffffff;
-  opacity: 0;
-  transform: translateY(30px);
   transition: all 0.8s ease-out;
-}
-
-.interaction-section.visible {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .container {
@@ -136,7 +129,7 @@ onMounted(() => {
   text-align: center;
   color: #666666;
   font-size: 16px;
-  margin-bottom: 50px;
+  margin-bottom: 80px;
 }
 
 .roulette-container {
@@ -231,7 +224,6 @@ onMounted(() => {
   padding: 20px;
   background: #f5f5f5;
   border-radius: 12px;
-  animation: fadeIn 0.5s ease-out;
 }
 
 .result-icon {
@@ -243,16 +235,5 @@ onMounted(() => {
   font-size: 18px;
   font-weight: 600;
   color: #00c73c;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
 }
 </style>
