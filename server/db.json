@@ -1,8 +1,8 @@
 {
   "event": {
     "id": 1,
-    "period": "2025.12.19 - 2025.12.31",
-    "endTime": "2025.12.31 23:59:59",
+    "period": "2025.12.19 - 2026.01.07",
+    "endTime": "2026.01.07 23:59:59",
     "target": "모든 사용자",
     "description": "신규 서비스 오픈을 기념하여 특별한 혜택을 준비했습니다!<br />이벤트에 응모하시면 다양한 보상과 작은 선물을 추가로 받으실 수 있습니다."
   },
@@ -12,21 +12,21 @@
       "name": "커피 쿠폰",
       "brand": "Coffee Brand",
       "image": "/coffee.png",
-      "validDate": "2025.12.19 - 12.31"
+      "validDate": "2025.12.19 - 2026.01.07"
     },
     {
       "id": 2,
       "name": "편의점 5,000원 할인 쿠폰",
       "brand": "Convenience Store",
       "image": "/coupon.png",
-      "validDate": "2025.12.19 - 12.31"
+      "validDate": "2025.12.19 - 2026.01.07"
     },
     {
       "id": 3,
       "name": "영화 티켓 쿠폰",
       "brand": "Movie Theater",
       "image": "/movie.png",
-      "validDate": "2025.12.19 - 12.31"
+      "validDate": "2025.12.19 - 2026.01.07"
     }
   ],
   "fortune": [
