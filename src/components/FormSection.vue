@@ -1,15 +1,69 @@
 <script setup lang="ts">
 import { postInfo } from '@/api/eventApi'
 import type { Info } from '@/api/types'
+import {
+  validateAgreedTerms,
+  validateEmail,
+  validateName,
+  validatePhone,
+  type ValidationErrors,
+} from '@/utils/validation'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { toast } from 'vue3-toastify'
 
 const info = ref<Info>({
   name: '',
   phone: '',
   email: '',
   agreedTerms: false,
+})
+
+const errors = ref<ValidationErrors>({
+  name: '',
+  phone: '',
+  email: '',
+  agreedTerms: '',
+})
+
+const checkCheckbox = ref(false)
+
+watch(
+  info,
+  () => {
+    if (info.value.name.trim() !== '') {
+      errors.value.name = validateName(info.value.name)
+    }
+    if (info.value.phone.trim() !== '') {
+      errors.value.phone = validatePhone(info.value.phone)
+    }
+    if (info.value.email.trim() !== '') {
+      errors.value.email = validateEmail(info.value.email)
+    }
+    if (checkCheckbox.value) {
+      errors.value.agreedTerms = validateAgreedTerms(info.value.agreedTerms)
+    }
+  },
+  { deep: true },
+)
+
+const handleCheckboxChange = () => {
+  checkCheckbox.value = true
+  errors.value.agreedTerms = validateAgreedTerms(info.value.agreedTerms)
+}
+
+const isValid = computed(() => {
+  return (
+    !errors.value.name &&
+    !errors.value.phone &&
+    !errors.value.email &&
+    !errors.value.agreedTerms &&
+    info.value.name.trim() !== '' &&
+    info.value.phone.trim() !== '' &&
+    info.value.email.trim() !== '' &&
+    info.value.agreedTerms
+  )
 })
 
 gsap.registerPlugin(ScrollTrigger)
@@ -43,18 +97,30 @@ onUnmounted(() => {
 
 const handleSubmit = async (e: Event) => {
   e.preventDefault()
+
+  errors.value.name = validateName(info.value.name)
+  errors.value.phone = validatePhone(info.value.phone)
+  errors.value.email = validateEmail(info.value.email)
+  errors.value.agreedTerms = validateAgreedTerms(info.value.agreedTerms)
+
+  if (!isValid.value) {
+    return
+  }
+
   try {
     await postInfo(info.value)
-    alert('응모가 완료되었습니다.')
+    toast.success('응모가 완료되었습니다.')
+
     info.value = {
       name: '',
       phone: '',
       email: '',
       agreedTerms: false,
     }
+    checkCheckbox.value = false
   } catch (error) {
     console.error('사용자 정보 저장 중 오류가 발생했습니다.', error)
-    alert('응모 중 오류가 발생했습니다. 다시 시도해주세요.')
+    toast.error('응모 중 오류가 발생했습니다. 다시 시도해주세요.')
   }
 }
 </script>
@@ -68,24 +134,24 @@ const handleSubmit = async (e: Event) => {
         <div class="form-group">
           <label for="name">이름</label>
           <input type="text" id="name" placeholder="이름을 입력해주세요." v-model="info.name" />
-          <span class="error-message"></span>
+          <span class="error-message">{{ errors.name }}</span>
         </div>
         <div class="form-group">
           <label for="phone">연락처</label>
           <input type="tel" id="phone" placeholder="010-1234-5678" v-model="info.phone" />
-          <span class="error-message"></span>
+          <span class="error-message">{{ errors.phone }}</span>
         </div>
         <div class="form-group">
           <label for="email">이메일</label>
           <input type="email" id="email" placeholder="example@example.com" v-model="info.email" />
-          <span class="error-message"></span>
+          <span class="error-message">{{ errors.email }}</span>
         </div>
-        <div class="form-group checkbox-group">
-          <label class="checkbox-label">
-            <input type="checkbox" v-model="info.agreedTerms" />
+        <div class="form-group">
+          <div class="checkbox-label">
+            <input type="checkbox" v-model="info.agreedTerms" @change="handleCheckboxChange" />
             <span>개인정보 수집 및 이용 약관에 동의합니다.</span>
-          </label>
-          <span class="error-message"></span>
+          </div>
+          <span class="error-message">{{ errors.agreedTerms }}</span>
         </div>
         <button class="submit-button">응모하기</button>
       </form>
@@ -107,7 +173,7 @@ const handleSubmit = async (e: Event) => {
   font-size: 32px;
   font-weight: 700;
   color: #000000;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   text-align: center;
 }
 
@@ -122,11 +188,12 @@ const handleSubmit = async (e: Event) => {
   background: #ffffff;
   padding: 40px;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .form-group {
-  margin-bottom: 24px;
+  position: relative;
+  margin-bottom: 16px;
 }
 
 .form-group label {
@@ -152,7 +219,10 @@ const handleSubmit = async (e: Event) => {
 .form-group input:focus {
   border-color: #00c73c;
   outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 199, 60, 0.1);
+}
+
+.form-group input[type='checkbox']:focus {
+  border-color: #e0e0e0;
 }
 
 .error-message {
@@ -160,28 +230,32 @@ const handleSubmit = async (e: Event) => {
   color: #ff4444;
   display: block;
   margin-top: 6px;
-}
-
-.checkbox-group {
-  margin-bottom: 32px;
+  min-height: 16px;
 }
 
 .checkbox-label {
   display: flex;
   align-items: center;
-  cursor: pointer;
   font-weight: 400;
 }
 
+.checkbox-label span {
+  font-size: 14px;
+  opacity: 0.5;
+  transition: all 0.2s ease;
+}
+
+.checkbox-label input[type='checkbox']:checked + span {
+  opacity: 1;
+}
+
 .checkbox-label input[type='checkbox'] {
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
+  width: 18px;
+  height: 18px;
   accent-color: #1a1a1a;
   flex-shrink: 0;
-  position: relative;
-  top: 5px;
   margin-right: 8px;
+  cursor: pointer;
 }
 
 .submit-button {
@@ -198,14 +272,9 @@ const handleSubmit = async (e: Event) => {
   box-shadow: 0 4px 12px rgba(0, 199, 60, 0.3);
 }
 
-.submit-button:hover:not(:disabled) {
+.submit-button:hover {
   background: #00b038;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 199, 60, 0.4);
-}
-
-.submit-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 </style>
