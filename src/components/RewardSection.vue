@@ -1,38 +1,19 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import coffeeImage from '@/assets/images/coffee.png'
-import movieImage from '@/assets/images/movie.png'
-import cuImage from '@/assets/images/coupon.png'
+import type { Reward } from '@/api/types'
+import { getRewards } from '@/api/eventApi'
 
-const rewards = [
-  {
-    id: 1,
-    name: '스타벅스 아메리카노 Tall 쿠폰',
-    brand: '스타벅스',
-    image: coffeeImage,
-    validDate: '2025.12.19 - 12.31',
-  },
-  {
-    id: 2,
-    name: 'CU 기프티콘 5,000원 할인 쿠폰',
-    brand: 'CU',
-    image: cuImage,
-    validDate: '2025.12.19 - 12.31',
-  },
-  {
-    id: 3,
-    name: '메가박스 영화 티켓 쿠폰',
-    brand: '메가박스',
-    image: movieImage,
-    validDate: '2025.12.19 - 12.31',
-  },
-]
-
+const rewards = ref<Reward[]>([])
 gsap.registerPlugin(ScrollTrigger)
 
 onMounted(async () => {
+  try {
+    rewards.value = await getRewards()
+  } catch (error) {
+    console.error('보상/혜택 목록을 불러오는 중 오류가 발생했습니다.', error)
+  }
   gsap.from('.reward-section', {
     y: 60,
     opacity: 0,

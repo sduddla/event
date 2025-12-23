@@ -1,53 +1,62 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import type { FortuneItem } from '@/api/types'
+import { getFortuneList } from '@/api/eventApi'
 const isSpinning = ref(false)
 const rotation = ref(0)
-const selectedReward = ref<{ value: number; label: string } | undefined>(undefined)
+const fortune = ref<FortuneItem[]>([])
+const selectedFortune = ref<FortuneItem | null>(null)
 
-const rewards = [
-  { value: 0, label: '10,000원 쿠폰' },
-  { value: 1, label: '5,000원 쿠폰' },
-  { value: 2, label: '3,000원 쿠폰' },
-  { value: 3, label: '다음 기회에' },
-  { value: 4, label: '1,000원 쿠폰' },
-  { value: 5, label: '2,000원 쿠폰' },
-]
-const anglePerItem = 360 / rewards.length
+const anglePerItem = computed(() => {
+  return fortune.value.length > 0 ? 360 / fortune.value.length : 0
+})
 
 const getConicGradient = () => {
+  if (fortune.value.length === 0) return ''
   let gradient = ''
-  rewards.forEach((_, index) => {
-    const startAngle = index * anglePerItem
-    const endAngle = (index + 1) * anglePerItem
+  fortune.value.forEach((_, index) => {
+    const startAngle = index * anglePerItem.value
+    const endAngle = (index + 1) * anglePerItem.value
     const color = index % 2 === 0 ? '#00c73c' : '#1a1a1a'
-    gradient += `${color} ${startAngle}deg ${endAngle}deg${index < rewards.length - 1 ? ',' : ''}`
+    gradient += `${color} ${startAngle}deg ${endAngle}deg${index < fortune.value.length - 1 ? ',' : ''}`
   })
   return `conic-gradient(${gradient})`
 }
 
 const spinRoulette = () => {
-  if (isSpinning.value) return
+  if (isSpinning.value || fortune.value.length === 0) return
 
   isSpinning.value = true
-  selectedReward.value = undefined
+  selectedFortune.value = null
 
   const randomRotation = 360 * 5 + Math.random() * 360
   rotation.value += randomRotation
 
   setTimeout(() => {
     const normalizedRotation = rotation.value % 360
-    const index = Math.floor((360 - normalizedRotation) / anglePerItem)
-    selectedReward.value = rewards[index % rewards.length]
-    console.log(selectedReward.value)
+    const index = Math.floor((360 - normalizedRotation) / anglePerItem.value)
+    const selected = fortune.value[index % fortune.value.length]
+    if (selected) {
+      selectedFortune.value = {
+        id: selected.id,
+        label: selected.label,
+        icon: selected.icon,
+      }
+    }
     isSpinning.value = false
   }, 3000)
 }
 
 gsap.registerPlugin(ScrollTrigger)
 
-onMounted(() => {
+onMounted(async () => {
+  try {
+    fortune.value = await getFortuneList()
+  } catch (error) {
+    console.error('행운의 룰렛 정보를 불러오는 중 오류가 발생했습니다.', error)
+  }
   gsap.from('.interaction-section', {
     y: 60,
     opacity: 0,
@@ -80,14 +89,14 @@ onUnmounted(() => {
             :class="{ spinning: isSpinning }"
           >
             <div
-              v-for="(reward, index) in rewards"
-              :key="index"
+              v-for="(fortuneItem, index) in fortune"
+              :key="fortuneItem.id"
               class="roulette-item"
               :style="{
                 transform: `rotate(${index * anglePerItem + anglePerItem / 2}deg)`,
               }"
             >
-              <div class="roulette-text">{{ reward.label }}</div>
+              <div class="roulette-text">{{ fortuneItem.label }}</div>
             </div>
           </div>
           <div class="roulette-pointer"></div>
@@ -97,9 +106,9 @@ onUnmounted(() => {
           {{ isSpinning ? '돌리는 중...' : '룰렛 돌리기' }}
         </button>
 
-        <div v-if="selectedReward" class="result-message">
-          <div class="result-icon">🎉</div>
-          <div class="result-text">{{ selectedReward.label }}을(를) 받으셨습니다!</div>
+        <div v-if="selectedFortune" class="result-message">
+          <div class="result-icon">{{ selectedFortune.icon }}</div>
+          <div class="result-text">{{ selectedFortune.label }}을(를) 받으셨습니다!</div>
         </div>
       </div>
     </div>

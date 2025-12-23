@@ -1,11 +1,21 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { getEventInfo } from '@/api/eventApi'
+import type { EventData } from '@/api/types'
 
+const eventInfo = ref<EventData | null>(null)
 gsap.registerPlugin(ScrollTrigger)
 
-onMounted(() => {
+onMounted(async () => {
+  try {
+    eventInfo.value = await getEventInfo()
+    console.log(eventInfo.value)
+  } catch (error) {
+    console.error('이벤트 정보를 불러오는 중 오류가 발생했습니다.', error)
+  }
+
   gsap.from('.event-info-section', {
     scale: 0.9,
     opacity: 0,
@@ -30,18 +40,15 @@ onUnmounted(() => {
       <div class="info-card">
         <div class="info-item">
           <span class="info-label">이벤트 기간</span>
-          <span class="info-value">2025.12.19 ~ 2025.12.31</span>
+          <span class="info-value">{{ eventInfo?.period }}</span>
         </div>
         <div class="info-item">
           <span class="info-label">대상</span>
-          <span class="info-value">모든 사용자</span>
+          <span class="info-value">{{ eventInfo?.target }}</span>
         </div>
       </div>
       <div class="description">
-        <p>
-          신규 서비스 오픈을 기념하여 특별한 혜택을 준비했습니다!<br />
-          이벤트에 응모하시면 다양한 보상과 작은 선물까지 추가로 받으실 수 있습니다.
-        </p>
+        <p v-html="eventInfo?.description"></p>
       </div>
     </div>
   </section>

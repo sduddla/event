@@ -1,7 +1,16 @@
 <script setup lang="ts">
+import { postInfo } from '@/api/eventApi'
+import type { Info } from '@/api/types'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
+
+const info = ref<Info>({
+  name: '',
+  phone: '',
+  email: '',
+  agreedTerms: false,
+})
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -31,6 +40,23 @@ onMounted(() => {
 onUnmounted(() => {
   ScrollTrigger.getAll().forEach((trigger) => trigger.kill())
 })
+
+const handleSubmit = async (e: Event) => {
+  e.preventDefault()
+  try {
+    await postInfo(info.value)
+    alert('응모가 완료되었습니다.')
+    info.value = {
+      name: '',
+      phone: '',
+      email: '',
+      agreedTerms: false,
+    }
+  } catch (error) {
+    console.error('사용자 정보 저장 중 오류가 발생했습니다.', error)
+    alert('응모 중 오류가 발생했습니다. 다시 시도해주세요.')
+  }
+}
 </script>
 <template>
   <section class="form-section">
@@ -38,25 +64,25 @@ onUnmounted(() => {
       <h2 class="section-title">이벤트 응모</h2>
       <p class="section-subtitle">정보를 입력하고 이벤트에 응모해주세요.</p>
 
-      <form class="form">
+      <form class="form" @submit.prevent="handleSubmit">
         <div class="form-group">
           <label for="name">이름</label>
-          <input type="text" id="name" placeholder="이름을 입력해주세요." />
+          <input type="text" id="name" placeholder="이름을 입력해주세요." v-model="info.name" />
           <span class="error-message"></span>
         </div>
         <div class="form-group">
           <label for="phone">연락처</label>
-          <input type="tel" id="phone" placeholder="010-1234-5678" />
+          <input type="tel" id="phone" placeholder="010-1234-5678" v-model="info.phone" />
           <span class="error-message"></span>
         </div>
         <div class="form-group">
           <label for="email">이메일</label>
-          <input type="email" id="email" placeholder="example@example.com" />
+          <input type="email" id="email" placeholder="example@example.com" v-model="info.email" />
           <span class="error-message"></span>
         </div>
         <div class="form-group checkbox-group">
           <label class="checkbox-label">
-            <input type="checkbox" />
+            <input type="checkbox" v-model="info.agreedTerms" />
             <span>개인정보 수집 및 이용 약관에 동의합니다.</span>
           </label>
           <span class="error-message"></span>
