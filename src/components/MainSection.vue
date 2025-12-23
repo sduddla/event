@@ -7,6 +7,7 @@ const days = ref(0)
 const hours = ref(0)
 const minutes = ref(0)
 const seconds = ref(0)
+const isEventEnded = ref(false)
 let countDownInterval: number | null = null
 let endTime: Date | null = null
 
@@ -26,8 +27,11 @@ const countDownTimer = async () => {
     hours.value = 0
     minutes.value = 0
     seconds.value = 0
+    isEventEnded.value = true
     return
   }
+
+  isEventEnded.value = false
 
   days.value = Math.floor(diff / (1000 * 60 * 60 * 24))
   hours.value = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
@@ -118,7 +122,8 @@ onUnmounted(() => {
       <p class="main-subtitle fade-in-delay-1">이벤트 응모하고 특별 혜택 받아가세요!</p>
 
       <div class="countdown-container fade-in-delay-2">
-        <div class="countdown-label">이벤트 종료까지</div>
+        <div class="countdown-label" v-if="!isEventEnded">이벤트 종료까지</div>
+        <div class="countdown-label" v-if="isEventEnded">이벤트가 종료되었습니다.</div>
         <div class="countdown-timer">
           <div class="countdown-item">
             <span class="countdown-number">{{ String(days).padStart(2, '0') }}</span>
