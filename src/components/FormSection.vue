@@ -29,6 +29,32 @@ const errors = ref<ValidationErrors>({
 
 const checkCheckbox = ref(false)
 const hasSubmitted = ref(false)
+const showShareButton = ref(false)
+
+const copyUrl = async () => {
+  const url = window.location.href
+
+  try {
+    await navigator.clipboard.writeText(url)
+    toast.success('URL이 복사되었습니다.')
+  } catch {
+    const textArea = document.createElement('textarea')
+    textArea.value = url
+    textArea.style.position = 'fixed'
+    textArea.style.opacity = '0'
+    document.body.appendChild(textArea)
+    textArea.select()
+
+    const success = document.execCommand('copy')
+    document.body.removeChild(textArea)
+
+    if (success) {
+      toast.success('URL이 복사되었습니다.')
+    } else {
+      toast.error('URL 복사에 실패했습니다.')
+    }
+  }
+}
 
 watch(
   info,
@@ -70,11 +96,6 @@ const isValid = computed(() => {
 gsap.registerPlugin(ScrollTrigger)
 
 onMounted(() => {
-  const submittedInfo = localStorage.getItem('submittedInfo')
-  if (submittedInfo) {
-    hasSubmitted.value = true
-  }
-
   gsap.from('.form-section', {
     y: 60,
     opacity: 0,
@@ -132,6 +153,7 @@ const handleSubmit = async (e: Event) => {
       }),
     )
     hasSubmitted.value = true
+    showShareButton.value = true
 
     info.value = {
       name: '',
@@ -177,6 +199,13 @@ const handleSubmit = async (e: Event) => {
         </div>
         <button class="submit-button">응모하기</button>
       </form>
+
+      <div v-if="showShareButton" class="share-container">
+        <button class="share-button" @click="copyUrl">
+          <span class="share-icon">🔗</span>
+          <span class="share-text">이벤트 공유하기</span>
+        </button>
+      </div>
     </div>
   </section>
 </template>
@@ -300,6 +329,41 @@ const handleSubmit = async (e: Event) => {
   box-shadow: 0 6px 20px rgba(0, 199, 60, 0.4);
 }
 
+.share-container {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.share-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  color: #00c73c;
+  border: 2px solid #00c73c;
+  border-radius: 12px;
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.share-button:hover {
+  background: #00c73c;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 199, 60, 0.3);
+}
+
+.share-icon {
+  font-size: 20px;
+}
+
+.share-text {
+  line-height: 1;
+}
+
 @media (max-width: 768px) {
   .form-section {
     padding: 60px 20px;
@@ -338,6 +402,15 @@ const handleSubmit = async (e: Event) => {
   .submit-button {
     padding: 16px;
     font-size: 16px;
+  }
+
+  .share-container {
+    margin-top: 20px;
+  }
+
+  .share-button {
+    padding: 12px 24px;
+    font-size: 14px;
   }
 }
 </style>
