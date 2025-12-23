@@ -57,15 +57,15 @@ onMounted(async () => {
   } catch (error) {
     console.error('행운의 룰렛 정보를 불러오는 중 오류가 발생했습니다.', error)
   }
+
   gsap.from('.interaction-section', {
-    y: 60,
     opacity: 0,
-    duration: 1,
+    duration: 0.6,
     ease: 'power2.out',
+    delay: 0.2,
     scrollTrigger: {
       trigger: '.interaction-section',
-      start: 'top 85%',
-      toggleActions: 'play none none none',
+      start: 'top 80%',
     },
   })
 })

@@ -17,14 +17,13 @@ onMounted(async () => {
   }
 
   gsap.from('.event-info-section', {
-    scale: 0.9,
     opacity: 0,
-    duration: 1,
+    duration: 0.6,
     ease: 'power2.out',
+    delay: 0.2,
     scrollTrigger: {
       trigger: '.event-info-section',
-      start: 'top 85%',
-      toggleActions: 'play none none none',
+      start: 'top 80%',
     },
   })
 })

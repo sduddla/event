@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { nextTick, onMounted, onUnmounted, ref } from 'vue'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import type { Reward } from '@/api/types'
@@ -14,15 +14,53 @@ onMounted(async () => {
   } catch (error) {
     console.error('보상/혜택 목록을 불러오는 중 오류가 발생했습니다.', error)
   }
-  gsap.from('.reward-section', {
-    y: 60,
+  await nextTick()
+
+  gsap.fromTo(
+    '.reward-section .section-title',
+    {
+      opacity: 0,
+    },
+    {
+      opacity: 1,
+      duration: 0.6,
+      ease: 'power2.out',
+      delay: 0.2,
+      scrollTrigger: {
+        trigger: '.reward-section',
+        start: 'top 80%',
+      },
+    },
+  )
+
+  gsap.fromTo(
+    '.reward-card',
+    {
+      opacity: 0,
+    },
+    {
+      opacity: 1,
+      duration: 0.6,
+      stagger: 0.2,
+      ease: 'back.out(1.2)',
+      scrollTrigger: {
+        trigger: '.reward-list',
+        start: 'top 80%',
+      },
+    },
+  )
+
+  const cardCount = rewards.value.length
+  const delay = (cardCount - 1) * 0.2
+
+  gsap.from('.notice', {
     opacity: 0,
-    duration: 0.8,
+    duration: 0.6,
     ease: 'power2.out',
+    delay: delay,
     scrollTrigger: {
-      trigger: '.reward-section',
-      start: 'top 85%',
-      toggleActions: 'play none none none',
+      trigger: '.reward-list',
+      start: 'top 80%',
     },
   })
 })
@@ -87,9 +125,6 @@ onUnmounted(() => {
   padding: 16px;
   position: relative;
   transition: all 0.3s ease;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: slideUp 0.6s ease-out forwards;
 }
 
 .coupon-badge {
@@ -151,12 +186,7 @@ onUnmounted(() => {
   color: #999999;
 }
 
-.reward-section.visible .reward-card {
-  animation: slideUp 0.6s ease-out forwards;
-}
-
 .reward-card:hover {
-  transform: translateY(-8px) scale(1.02);
   box-shadow: 0 12px 32px rgba(0, 199, 60, 0.3);
 }
 
@@ -165,12 +195,5 @@ onUnmounted(() => {
   color: #666666;
   font-size: 14px;
   margin-top: 20px;
-}
-
-@keyframes slideUp {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 </style>
