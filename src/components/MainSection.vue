@@ -43,7 +43,8 @@ const countDownTimer = async () => {
 const initCountDown = async () => {
   try {
     const eventInfo = await getEventInfo()
-    endTime = new Date(eventInfo.endTime)
+    const formattedEndTime = eventInfo.endTime.replace(/\./g, '-').replace(' ', 'T')
+    endTime = new Date(formattedEndTime)
     countDownTimer()
   } catch (error) {
     console.error('카운트다운 타이머 오류:', error)
