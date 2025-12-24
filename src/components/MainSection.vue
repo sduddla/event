@@ -184,7 +184,7 @@ onUnmounted(() => {
 }
 
 .main-title {
-  font-size: 48px;
+  font-size: 46px;
   font-weight: 600;
   color: #ffffff;
   margin-bottom: 20px;
@@ -368,12 +368,12 @@ onUnmounted(() => {
   }
 
   .main-title {
-    font-size: 32px;
+    font-size: 26px;
     margin-bottom: 16px;
   }
 
   .main-subtitle {
-    font-size: 16px;
+    font-size: 14px;
     margin-bottom: 30px;
   }
 
