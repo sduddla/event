@@ -11,7 +11,6 @@ gsap.registerPlugin(ScrollTrigger)
 onMounted(async () => {
   try {
     eventInfo.value = await getEventInfo()
-    console.log(eventInfo.value)
   } catch (error) {
     console.error('이벤트 정보를 불러오는 중 오류가 발생했습니다.', error)
   }
