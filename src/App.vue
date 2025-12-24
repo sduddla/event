@@ -13,6 +13,5 @@ import RewardSection from './components/RewardSection.vue'
     <RewardSection />
     <InteractionSection />
     <FormSection />
-    <ToastContainers />
   </div>
 </template>
