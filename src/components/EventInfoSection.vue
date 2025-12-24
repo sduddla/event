@@ -115,7 +115,7 @@ onUnmounted(() => {
   }
 
   .section-title {
-    font-size: 28px;
+    font-size: 26px;
     margin-bottom: 30px;
   }
 
