@@ -167,6 +167,22 @@ const handleSubmit = async (e: Event) => {
     toast.error('응모 중 오류가 발생했습니다. 다시 시도해주세요.')
   }
 }
+
+const handlePhoneInput = (e: Event) => {
+  const input = e.target as HTMLInputElement
+  let value = input.value.replace(/[^0-9]/g, '')
+
+  if (value.length > 11) {
+    value = value.slice(0, 11)
+  }
+
+  if (value.length > 3 && value.length <= 7) {
+    value = value.slice(0, 3) + '-' + value.slice(3)
+  } else if (value.length > 7) {
+    value = value.slice(0, 3) + '-' + value.slice(3, 7) + '-' + value.slice(7)
+  }
+  input.value = value
+}
 </script>
 <template>
   <section class="form-section">
@@ -182,7 +198,13 @@ const handleSubmit = async (e: Event) => {
         </div>
         <div class="form-group">
           <label for="phone">연락처</label>
-          <input type="tel" id="phone" placeholder="010-1234-5678" v-model="info.phone" />
+          <input
+            type="tel"
+            id="phone"
+            placeholder="010-1234-5678"
+            v-model="info.phone"
+            @input="handlePhoneInput"
+          />
           <span class="error-message">{{ errors.phone }}</span>
         </div>
         <div class="form-group">

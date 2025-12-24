@@ -17,10 +17,6 @@ export const validatePhone = (phone: string) => {
     return '전화번호를 입력해 주세요.'
   }
 
-  const phoneRegex = /^010-\d{4}-\d{4}$/
-  if (!phoneRegex.test(phone)) {
-    return '올바른 전화번호 형식을 입력해 주세요. (예: 010-1234-5678)'
-  }
   return ''
 }
 
